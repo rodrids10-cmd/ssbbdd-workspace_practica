@@ -116,18 +116,22 @@ services:
 	@echo ""
 	@echo "📓 Jupyter Notebook:"
 	@docker exec $(CONTAINER_NAME) ps aux | grep -v grep | grep jupyter > /dev/null && echo "  ✅ Proceso corriendo" || echo "  ❌ Proceso no encontrado"
-	@docker exec $(CONTAINER_NAME) netstat -tuln 2>/dev/null | grep 8889 > /dev/null && echo "  ✅ Puerto 8889 escuchando" || echo "  ❌ Puerto 8889 no escucha"
+	@docker exec $(CONTAINER_NAME) netstat -tuln 2>/dev/null | grep $(JUPYTER_PORT) > /dev/null && echo "  ✅ Puerto $(JUPYTER_PORT) escuchando" || echo "  ❌ Puerto $(JUPYTER_PORT) no escucha"
 	@echo ""
-	@echo "🎨 Hue:"
+	@echo "🎨 Hue (Interfaz Gráfica):"
 	@docker exec $(CONTAINER_NAME) service hue status 2>/dev/null | grep -q running && echo "  ✅ Servicio corriendo" || echo "  ❌ Servicio parado"
-	@docker exec $(CONTAINER_NAME) netstat -tuln 2>/dev/null | grep 8888 > /dev/null && echo "  ✅ Puerto 8888 escuchando" || echo "  ❌ Puerto 8888 no escucha"
+	@docker exec $(CONTAINER_NAME) netstat -tuln 2>/dev/null | grep $(HUE_PORT) > /dev/null && echo "  ✅ Puerto $(HUE_PORT) escuchando" || echo "  ❌ Puerto $(HUE_PORT) no escucha"
+	@echo ""
+	@echo "🐝 Hive (Base de Datos):"
+	@docker exec $(CONTAINER_NAME) service hive-server2 status 2>/dev/null | grep -q running && echo "  ✅ Servicio corriendo" || echo "  ❌ Servicio parado"
+	@docker exec $(CONTAINER_NAME) netstat -tuln 2>/dev/null | grep 10000 > /dev/null && echo "  ✅ Puerto 10000 escuchando" || echo "  ❌ Puerto 10000 no escucha"
 	@echo ""
 	@echo "🌐 URLs de acceso:"
 	@echo "  • Jupyter: http://localhost:$(JUPYTER_PORT)"
 	@echo "  • Hue:     http://localhost:$(HUE_PORT) (cloudera/cloudera)"
 	@echo ""
 	@echo "💡 Si los servicios no están corriendo:"
-	@echo "   make restart-all    (reinicia ambos servicios)"
+	@echo "   make restart-all    (reinicia todos los servicios)"
 
 # Abre Jupyter notebooks (workspace principal para la práctica)
 jupyter:
@@ -171,11 +175,18 @@ restart-jupyter:
 	@sleep 3
 	@echo "✅ Jupyter reiniciado. Verifica con 'make services'"
 
+restart-hive:
+	@echo "🔄 Reiniciando el server de Hive..."
+	@docker exec $(CONTAINER_NAME) service hive-server2 restart
+	@sleep 2
+	@echo "✅ Servidor de hive reiniciado. Verifica con 'make services'"
+
 # Reinicia ambos servicios web
 restart-all:
 	@echo "🔄 Reiniciando todos los servicios web..."
 	@make restart-hue
 	@make restart-jupyter
+	@make restart-hive
 	@echo ""
 	@echo "✅ Servicios reiniciados. Verificando estado..."
 	@sleep 2
