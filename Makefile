@@ -36,6 +36,7 @@ help:
 	@echo "🔧 GESTIÓN DE SERVICIOS:"
 	@echo "  make restart-jupyter - Reinicia servicio Jupyter"
 	@echo "  make restart-hue     - Reinicia servicio Hue"
+	@echo "  make restart-hive    - Reinicia servicio Hive"
 	@echo "  make restart-all     - Reinicia ambos servicios web"
 	@echo ""
 	@echo "🧹 LIMPIEZA:"
