@@ -34,7 +34,7 @@ services:
       - DISPLAY=host.docker.internal:0
     volumes:
       # Carpeta local para notebooks y datos persistentes (SBD práctica)
-      - /home/rafael/dev/ssbbdd_pec/mids-cloudera-hadoop/workspace:/workspace
+      - "C:/Users/rodri/Documents/Ing_Informatica/3_curso/1_cuatri/SSBBDD/Practica/workspace:/workspace"
       # Volúmenes adicionales opcionales para HDFS y datos
       - hdfs-namenode:/hadoop/dfs/name
       - hdfs-datanode:/hadoop/dfs/data
@@ -42,9 +42,9 @@ services:
     deploy:
       resources:
         limits:
-          memory: 8G
-        reservations:
           memory: 4G
+        reservations:
+          memory: 2G
     # Health check básico para verificar servicios Hadoop
     healthcheck:
       test: ["CMD", "bash", "-c", "hdfs dfsadmin -report | grep -q 'DFS is healthy' || curl -f http://localhost:8889 || exit 1"]
